@@ -8,16 +8,14 @@ import "./index.css";
 
 let tasks: Task[] = [];
 
-const app = document.querySelector<HTMLDivElement>("#app")!;
-
 const taskForm = document.querySelector<HTMLFormElement>("#taskForm");
 const tasksList = document.querySelector<HTMLDivElement>("#tasksList");
 
 taskForm?.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const title = taskForm["title"] as HTMLInputElement;
-  const description = taskForm["description"] as HTMLTextAreaElement;
+  const title = taskForm["title"] as unknown as HTMLInputElement;
+  const description = taskForm["description"] as unknown as HTMLTextAreaElement;
 
   tasks.unshift({
     title: title.value,
@@ -41,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTasks(tasks);
 });
 
-function renderTasks(task: Task[]) {
-  tasksList.innerHTML = "";
+function renderTasks(tasks: Task[]) {
+  tasksList!.innerHTML = "";
 
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
@@ -61,22 +59,22 @@ function renderTasks(task: Task[]) {
     btnDelete.className = "bg-red-500 px-2 py-1 rounded-md";
     header.append(btnDelete);
 
-    btnDelete.addEventListener("click", (e) => {
+    btnDelete.addEventListener("click", () => {
       const index = tasks.findIndex((t) => t.id === task.id);
       tasks.splice(index, 1);
       localStorage.setItem("tasks", JSON.stringify(tasks));
       renderTasks(tasks);
     });
 
-    taskElement.append(header);
+    taskElement?.append(header);
 
     const id = document.createElement("p");
     id.className = "text-gray-400 text-xs";
     id.innerText = task.id;
-    taskElement.append(id);
+    taskElement?.append(id);
 
     const description = document.createElement("div");
-    description.innerText = task.description;
+    description.innerText = task.description || "";
     taskElement.append(description);
 
     tasksList?.append(taskElement);
